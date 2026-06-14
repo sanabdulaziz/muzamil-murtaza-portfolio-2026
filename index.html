@@ -212,6 +212,7 @@
     background:radial-gradient(circle at 32% 28%,#eaff6b,var(--ball) 45%,#9fcf1f 100%);
     box-shadow:0 8px 20px rgba(212,245,52,.4),inset -6px -7px 14px rgba(0,0,0,.25)}
   #bounceBall::before{content:"";position:absolute;top:-6%;left:30%;width:40%;height:112%;border:3px solid #fbffe9;border-radius:50%;transform:rotate(-18deg)}
+  #ballLabel{position:fixed;z-index:121;display:none;background:rgba(10,20,16,.94);border:1px solid var(--card-bd);color:var(--ball);font-weight:700;font-size:.72rem;padding:5px 11px;border-radius:50px;white-space:nowrap;pointer-events:none;transform:translate(-50%,0);box-shadow:0 6px 16px rgba(0,0,0,.4)}
 
   @media(max-width:880px){
     .hero-inner{grid-template-columns:1fr;text-align:center}
@@ -236,7 +237,8 @@
 <body>
 <div id="scrollbar"></div>
 <div id="cursorBall"></div>
-<div id="bounceBall" title="Smash me!"></div>
+<div id="bounceBall" title="His current tour — M15 Turkey"></div>
+<div id="ballLabel">🎾 Current tour · M15 Turkey</div>
 
 <!-- NAV -->
 <header id="header">
@@ -295,7 +297,7 @@
       <div class="ball-stage">
         <div class="big-ball"><div class="seam"></div></div>
         <div class="rank-badge rb1"><div class="t">Davis Cup</div><div class="v">Winner 🏆</div></div>
-        <div class="rank-badge rb2"><div class="t">ATP Rank</div><div class="v">1084</div></div>
+        <div class="rank-badge rb2"><div class="t">Ranking</div><div class="v">Pakistan #1 🇵🇰</div></div>
         <div class="rank-badge rb3"><div class="t">Status</div><div class="v">ATP Finalist</div></div>
       </div>
     </div>
@@ -341,7 +343,6 @@
   <p class="section-sub reveal">The milestones that define the journey — on national soil and international courts.</p>
   <div class="grid ach-grid">
     <div class="ach reveal"><div class="ico">🏆</div><h3>ATP Finalist</h3><p>Pakistan's ATP finalist — reaching the title round on the professional circuit.</p></div>
-    <div class="ach reveal"><div class="ico">🏆</div><h3>Davis Cup Winner</h3><p>A Davis Cup winner for Pakistan, including a commanding <strong style="color:var(--ball)">5–0 win over Senegal</strong>.</p></div>
     <div class="ach reveal"><div class="ico">🥇</div><h3>National Games Gold</h3><p>Gold medalist at the National Games — a standout on the domestic stage.</p></div>
     <div class="ach reveal"><div class="ico">👑</div><h3>National No.1 — Singles</h3><p>Ranked Pakistan's No.1 in Men's Singles.</p></div>
     <div class="ach reveal"><div class="ico">🤝</div><h3>National No.1 — Doubles</h3><p>Ranked Pakistan's No.1 in Men's Doubles — dominant on both fronts.</p></div>
@@ -359,7 +360,7 @@
   <p class="section-sub reveal">Big stakes, local and international tennis events — titles won and finals reached.</p>
   <div class="now-playing reveal">
     <span class="np-live"><span class="live-dot"></span> Now on tour</span>
-    <div class="np-text"><strong>Kayseri, Turkey</strong> — competing on the ITF / pro tour this coming week. 🇹🇷🎾</div>
+    <div class="np-text"><strong>M15 Turkey · Kayseri</strong> — competing on the ITF World Tennis Tour this coming week. 🇹🇷🎾</div>
   </div>
   <div class="timeline">
     <div class="tl-item reveal"><div class="node" style="background:#ff5a5a;box-shadow:0 0 0 4px rgba(255,90,90,.2)"></div><div class="tl-card">
@@ -565,9 +566,9 @@
   addEventListener('keydown',e=>{if(e.key==='Escape')closeCV();});
 
   // bouncing ball easter egg
-  const bb=document.getElementById('bounceBall');
+  const bb=document.getElementById('bounceBall'),ballLabel=document.getElementById('ballLabel');
   let bx=120,by=120,vx=3.4,vy=2.6,running=false,raf;
-  function showBall(){bb.style.display='block';running=true;loop();}
+  function showBall(){bb.style.display='block';ballLabel.style.display='block';running=true;loop();}
   function loop(){
     const w=innerWidth-34,h=innerHeight-34;
     bx+=vx;by+=vy;
@@ -575,6 +576,7 @@
     bx=Math.max(0,Math.min(w,bx));by=Math.max(0,Math.min(h,by));
     bb.style.left=bx+'px';bb.style.top=by+'px';
     bb.style.transform='rotate('+(bx+by)+'deg)';
+    ballLabel.style.left=(bx+17)+'px';ballLabel.style.top=(by+40)+'px';
     if(running)raf=requestAnimationFrame(loop);
   }
   bb.addEventListener('click',()=>{vx*=1.25;vy*=1.25;bb.animate([{transform:'scale(1.5)'},{transform:'scale(1)'}],{duration:200});});
