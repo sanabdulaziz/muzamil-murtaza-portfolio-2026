@@ -197,6 +197,21 @@
   .contact-links a:hover{background:var(--ball);color:#06120b;transform:translateY(-3px)}
   footer{text-align:center;color:var(--muted);font-size:.88rem;padding:36px 24px 50px;border-top:1px solid rgba(255,255,255,.06)}
   footer .heart{color:var(--ball)}
+  /* nav social icons */
+  .nav-ic{display:inline-flex;align-items:center;justify-content:center;color:var(--muted);transition:.25s}
+  .nav-ic.ig:hover{color:#e1306c;transform:translateY(-2px)}
+  .nav-ic.yt:hover{color:#ff0000;transform:translateY(-2px)}
+
+  /* gallery */
+  .gallery-grid{display:grid;grid-template-columns:1fr 1.18fr 1fr;gap:30px;align-items:center}
+  .frame{position:relative;border:5px solid var(--ball);border-radius:18px;overflow:hidden;background:#0c1712;animation:frameGlow 2.6s ease-in-out infinite}
+  .frame.mid{transform:scale(1.06);animation-delay:1.3s;border-width:6px}
+  .frame img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;transition:.5s}
+  .frame:hover img{transform:scale(1.06)}
+  .frame .cap{position:absolute;left:0;right:0;bottom:0;padding:26px 16px 12px;font-size:.85rem;font-weight:600;color:#fff;background:linear-gradient(transparent,rgba(6,18,11,.92))}
+  .frame .cap small{display:block;color:var(--ball);font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
+  @keyframes frameGlow{0%,100%{box-shadow:0 0 6px rgba(212,245,52,.35),0 0 2px rgba(212,245,52,.25)}50%{box-shadow:0 0 30px rgba(212,245,52,.9),0 0 60px rgba(212,245,52,.45)}}
+  @media(max-width:880px){.gallery-grid{grid-template-columns:1fr;max-width:420px;margin:0 auto}.frame.mid{transform:none}}
   .socials{display:flex;gap:16px;justify-content:center;margin-bottom:26px;flex-wrap:wrap}
   .social{display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:.92rem;color:var(--text);padding:11px 20px;border-radius:50px;border:1px solid var(--card-bd);background:var(--card);transition:.25s}
   .social svg{transition:.25s}
@@ -251,11 +266,17 @@
     <a class="logo" href="#hero"><span class="dot"></span> Muzamil&nbsp;Murtaza</a>
     <div class="nav-links" id="navLinks">
       <a href="#about">About</a>
+      <a href="#gallery">Gallery</a>
       <a href="#achievements">Achievements</a>
       <a href="#tournaments">Tournaments</a>
       <a href="#skills">Skills</a>
       <a href="#contribute">Contribute</a>
-      <a href="#contact">Contact</a>
+      <a class="nav-ic ig" href="https://www.instagram.com/muzammil_murtaza1?igsh=aHVod3NqczM0ZWNw" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16Zm0 1.62c-3.15 0-3.52.01-4.76.07-.9.04-1.39.19-1.72.32-.43.17-.74.37-1.06.69-.32.32-.52.63-.69 1.06-.13.33-.28.82-.32 1.72-.06 1.24-.07 1.61-.07 4.76s.01 3.52.07 4.76c.04.9.19 1.39.32 1.72.17.43.37.74.69 1.06.32.32.63.52 1.06.69.33.13.82.28 1.72.32 1.24.06 1.61.07 4.76.07s3.52-.01 4.76-.07c.9-.04 1.39-.19 1.72-.32.43-.17.74-.37 1.06-.69.32-.32.52-.63.69-1.06.13-.33.28-.82.32-1.72.06-1.24.07-1.61.07-4.76s-.01-3.52-.07-4.76c-.04-.9-.19-1.39-.32-1.72a2.85 2.85 0 0 0-.69-1.06 2.85 2.85 0 0 0-1.06-.69c-.33-.13-.82-.28-1.72-.32-1.24-.06-1.61-.07-4.76-.07Zm0 2.76a5.3 5.3 0 1 1 0 10.6 5.3 5.3 0 0 1 0-10.6Zm0 1.62a3.68 3.68 0 1 0 0 7.36 3.68 3.68 0 0 0 0-7.36Zm5.48-2.9a1.24 1.24 0 1 1 0 2.48 1.24 1.24 0 0 1 0-2.48Z"/></svg>
+      </a>
+      <a class="nav-ic yt" href="https://youtube.com/@muzamilmurtaza7130?si=Puyp86voILEWhZyP" target="_blank" rel="noopener" aria-label="YouTube" title="YouTube">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2 31.5 31.5 0 0 0 0 12a31.5 31.5 0 0 0 .5 5.8 3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14A31.5 31.5 0 0 0 24 12a31.5 31.5 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.2 3.6-6.2 3.6Z"/></svg>
+      </a>
       <button class="btn btn-primary" onclick="openCV()">View CV</button>
     </div>
     <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
@@ -338,6 +359,27 @@
     <div class="stat"><div class="n" data-count="2" data-prefix="x">0</div><div class="l">No.1 — Singles & Doubles</div></div>
     <div class="stat"><div class="n" data-count="5" data-prefix="">0</div><div class="l">Davis Cup whitewash vs Senegal (5-0)</div></div>
     <div class="stat"><div class="n" data-count="4" data-prefix="">0</div><div class="l">Intl. Medals & Podiums</div></div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <span class="eyebrow reveal">In Pictures</span>
+  <h2 class="section-title reveal">On & Off the Court</h2>
+  <p class="section-sub reveal">Moments from the journey — champion's trophies, national titles, and the quiet grind at dusk.</p>
+  <div class="gallery-grid reveal">
+    <div class="frame">
+      <img src="assets/photo-2025.jpg" alt="Muzamil Murtaza — National Ranking Tennis Championship 2025 winner" loading="lazy" />
+      <div class="cap"><small>Aug 2025 · National Ranking C'ship</small>Pakistan Independence Day — Winner</div>
+    </div>
+    <div class="frame mid">
+      <img src="assets/photo-dark.jpg" alt="Muzamil Murtaza on court at dusk" loading="lazy" />
+      <div class="cap"><small>On Tour</small>The grind never stops</div>
+    </div>
+    <div class="frame">
+      <img src="assets/photo-2024.jpg" alt="Muzamil Murtaza — Khawaja Iftikhar Memorial National Tennis Championship 2024 champion" loading="lazy" />
+      <div class="cap"><small>2024 · Khawaja Iftikhar Memorial</small>National Champion</div>
+    </div>
   </div>
 </section>
 
