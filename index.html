@@ -743,6 +743,13 @@
     clay:{court:'#b65327',line:'#ffe9d6',name:'Clay'},
     grass:{court:'#2f7d3a',line:'#eaffea',name:'Grass'}
   };
+  const TOUR={
+    'Australian Open':{banner:'#0a6bb0',accent:'#27a9e0',stand:'#0b3a57'},
+    'French Open':{banner:'#9c3a16',accent:'#d4763f',stand:'#5a2410'},
+    'Wimbledon':{banner:'#0c5a2b',accent:'#6a2f93',stand:'#0a3a1d'},
+    'US Open':{banner:'#16307a',accent:'#f2c200',stand:'#0e2050'},
+    'Rome Masters':{banner:'#8f261b',accent:'#2b6fb0',stand:'#4d160f'}
+  };
   document.getElementById('surfaceOpts').addEventListener('click',e=>{
     const b=e.target.closest('[data-surface]');if(!b)return;
     surface=b.dataset.surface;
@@ -765,78 +772,140 @@
   document.getElementById('startGame').addEventListener('click',startGame);
 
   const cv=document.getElementById('gameCanvas'),gx=cv.getContext('2d');
-  let you,cpu,ball,sYou,sCpu,paddleW,winner;
-  function resetBall(dir){
-    ball={x:cv.width/2,y:cv.height/2,vx:(Math.random()*2-1)*3,vy:dir*4.2,r:8};
+  const CL=66,CR=cv.width-66,CT=46,CB=cv.height-16;   // court bounds
+  const PW=96;                                          // player reach (paddle width)
+  let you,cpu,ball,sYou,sCpu,winner,youSwing=0,cpuSwing=0,crowd=[],tNow=0;
+
+  // ----- sound -----
+  let ac,ambientGain,muted=false,muteBtn;
+  function initAudio(){
+    if(ac)return;
+    try{ac=new (window.AudioContext||window.webkitAudioContext)();
+      const buf=ac.createBuffer(1,ac.sampleRate*2,ac.sampleRate),d=buf.getChannelData(0);
+      for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+      const src=ac.createBufferSource();src.buffer=buf;src.loop=true;
+      const lp=ac.createBiquadFilter();lp.type='lowpass';lp.frequency.value=550;
+      ambientGain=ac.createGain();ambientGain.gain.value=muted?0:0.022;
+      src.connect(lp).connect(ambientGain).connect(ac.destination);src.start();
+    }catch(e){}
   }
+  function playHit(){if(!ac||muted)return;const o=ac.createOscillator(),g=ac.createGain();o.type='triangle';o.frequency.value=300+Math.random()*60;o.connect(g).connect(ac.destination);g.gain.setValueAtTime(.2,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.12);o.start();o.stop(ac.currentTime+.13);}
+  function playCheer(){if(!ac||muted)return;const dur=.75,buf=ac.createBuffer(1,ac.sampleRate*dur,ac.sampleRate),d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,1.4);const s=ac.createBufferSource();s.buffer=buf;const bp=ac.createBiquadFilter();bp.type='bandpass';bp.frequency.value=1400;const g=ac.createGain();g.gain.value=.3;s.connect(bp).connect(g).connect(ac.destination);s.start();}
+  function ensureMuteBtn(){
+    if(muteBtn)return;
+    muteBtn=document.createElement('button');muteBtn.className='btn btn-ghost';muteBtn.style.cssText='padding:5px 11px;font-size:.85rem';muteBtn.textContent='🔊';
+    muteBtn.onclick=()=>{muted=!muted;muteBtn.textContent=muted?'🔇':'🔊';if(ambientGain)ambientGain.gain.value=muted?0:0.022;};
+    document.querySelector('.score-bar').appendChild(muteBtn);
+  }
+
+  // ----- crowd -----
+  function buildCrowd(){
+    crowd=[];const accent=TOUR[tournament].accent;
+    const cols=['#e8e8e8','#ffd25a','#7ad0ff','#ff8f6b','#9ff0a8','#ff6fae',accent,'#ffffff'];
+    [[8,CL-12],[CR+12,cv.width-8]].forEach(([x0,x1])=>{
+      for(let y=CT+4;y<CB-2;y+=15)
+        for(let x=x0;x<x1;x+=13)
+          crowd.push({x:x+(Math.random()*4-2),y,c:cols[(Math.random()*cols.length)|0],ph:Math.random()*6.28});
+    });
+  }
+
+  function resetBall(dir){ball={x:(CL+CR)/2,y:(CT+CB)/2,vx:(Math.random()*2-1)*3,vy:dir*4.2,r:8};}
+
   function startGame(){
+    initAudio();ensureMuteBtn();buildCrowd();
     setupEl.style.display='none';playEl.style.display='block';
     document.getElementById('gameTitle').textContent=tournament+' · '+SURF[surface].name+' Court';
-    paddleW=90;
-    you={x:cv.width/2-paddleW/2,w:paddleW,h:12};
-    cpu={x:cv.width/2-paddleW/2,w:paddleW,h:12};
+    you={x:(CL+CR)/2,w:PW};cpu={x:(CL+CR)/2,w:PW};
     sYou=0;sCpu=0;winner=null;updateScore();
     document.getElementById('gameMsg').textContent='Move your racket with the mouse / finger. First to 7 wins!';
     resetBall(1);playing=true;if(gameRAF)cancelAnimationFrame(gameRAF);drawLoop();
   }
   function updateScore(){document.getElementById('scoreYou').textContent=sYou;document.getElementById('scoreCpu').textContent=sCpu;}
   function movePaddle(clientX){
-    const rect=cv.getBoundingClientRect();
-    const scale=cv.width/rect.width;
-    let nx=(clientX-rect.left)*scale-you.w/2;
-    you.x=Math.max(0,Math.min(cv.width-you.w,nx));
+    const rect=cv.getBoundingClientRect(),scale=cv.width/rect.width;
+    you.x=Math.max(CL+18,Math.min(CR-18,(clientX-rect.left)*scale));
   }
   cv.addEventListener('mousemove',e=>movePaddle(e.clientX));
   cv.addEventListener('touchmove',e=>{e.preventDefault();movePaddle(e.touches[0].clientX);},{passive:false});
 
+  function drawPlayer(px,py,dir,kit,name,swing){
+    gx.save();gx.translate(px,py);
+    gx.fillStyle='rgba(0,0,0,.22)';gx.beginPath();gx.ellipse(0,18,15,4,0,0,7);gx.fill();
+    gx.strokeStyle=kit.short;gx.lineWidth=5;gx.lineCap='round';
+    gx.beginPath();gx.moveTo(-3,6);gx.lineTo(-6,17);gx.moveTo(3,6);gx.lineTo(6,17);gx.stroke();
+    gx.fillStyle=kit.shirt;gx.beginPath();gx.roundRect(-9,-8,18,16,6);gx.fill();
+    gx.fillStyle=kit.skin;gx.beginPath();gx.arc(0,-15,6.5,0,7);gx.fill();
+    gx.fillStyle='#241a12';gx.beginPath();gx.arc(0,-17,6.6,Math.PI,2*Math.PI);gx.fill();
+    // racket arm (swings toward court)
+    gx.save();gx.translate(7,-3);
+    const base=dir*1.15, ang=base - dir*swing*1.7;
+    gx.rotate(ang);
+    gx.strokeStyle=kit.skin;gx.lineWidth=4;gx.beginPath();gx.moveTo(0,0);gx.lineTo(15,0);gx.stroke();
+    gx.translate(15,0);gx.strokeStyle='#caff2e';gx.lineWidth=2.6;
+    gx.beginPath();gx.ellipse(7,0,7,9,Math.PI/2,0,7);gx.stroke();
+    gx.beginPath();gx.moveTo(0,0);gx.lineTo(3,0);gx.stroke();
+    gx.restore();
+    gx.fillStyle='#fff';gx.font='bold 11px Outfit, sans-serif';gx.textAlign='center';
+    gx.fillText(name,0,dir>0?32:-28);
+    gx.restore();
+  }
+
   function drawLoop(){
-    const s=SURF[surface];
+    tNow+=16;const s=SURF[surface],th=TOUR[tournament];
+    // stadium floor
+    gx.fillStyle='#0a1410';gx.fillRect(0,0,cv.width,cv.height);
+    // stands
+    gx.fillStyle=th.stand;gx.fillRect(0,CT,CL-6,CB-CT);gx.fillRect(CR+6,CT,cv.width-(CR+6),CB-CT);
+    // crowd
+    crowd.forEach(p=>{const bob=Math.sin(tNow/380+p.ph)*1.3;gx.fillStyle=p.c;gx.beginPath();gx.arc(p.x,p.y+bob,3,0,7);gx.fill();});
     // court
-    gx.fillStyle=s.court;gx.fillRect(0,0,cv.width,cv.height);
-    gx.strokeStyle=s.line;gx.lineWidth=2;gx.globalAlpha=.7;
-    gx.strokeRect(14,14,cv.width-28,cv.height-28);
-    gx.beginPath();gx.setLineDash([8,8]);gx.moveTo(14,cv.height/2);gx.lineTo(cv.width-14,cv.height/2);gx.stroke();gx.setLineDash([]);
+    gx.fillStyle=s.court;gx.fillRect(CL,CT,CR-CL,CB-CT);
+    gx.strokeStyle=s.line;gx.lineWidth=2;gx.globalAlpha=.85;
+    gx.strokeRect(CL+6,CT+6,CR-CL-12,CB-CT-12);
+    gx.beginPath();gx.moveTo(CL+6,(CT+CB)/2);gx.lineTo(CR-6,(CT+CB)/2);gx.stroke();
+    gx.beginPath();gx.moveTo((CL+CR)/2,CT+6);gx.lineTo((CL+CR)/2,CB-6);gx.stroke();
     gx.globalAlpha=1;
-    // Muzamil label
-    gx.fillStyle='rgba(255,255,255,.85)';gx.font='bold 12px Outfit, sans-serif';
-    gx.fillText('🎾 MUZAMIL',16,30);
+    // net
+    gx.strokeStyle='rgba(255,255,255,.55)';gx.lineWidth=3;gx.setLineDash([4,4]);
+    gx.beginPath();gx.moveTo(CL,(CT+CB)/2);gx.lineTo(CR,(CT+CB)/2);gx.stroke();gx.setLineDash([]);
+    // tournament banner
+    gx.fillStyle=th.banner;gx.fillRect(0,0,cv.width,CT-4);
+    gx.fillStyle=th.accent;gx.fillRect(0,CT-7,cv.width,3);
+    gx.fillStyle='#fff';gx.font='900 19px Bebas Neue, Outfit, sans-serif';gx.textAlign='center';
+    gx.fillText(tournament.toUpperCase()+'  •  '+SURF[surface].name.toUpperCase()+' COURT',cv.width/2,27);
 
     if(playing){
-      // ball move
       ball.x+=ball.vx;ball.y+=ball.vy;
-      if(ball.x<ball.r||ball.x>cv.width-ball.r)ball.vx*=-1;
-      // cpu AI
-      const cpuCenter=cpu.x+cpu.w/2, target=ball.y<cv.height/2?ball.x:cv.width/2;
-      cpu.x+=Math.max(-4.6,Math.min(4.6,target-cpuCenter))*0.9;
-      cpu.x=Math.max(0,Math.min(cv.width-cpu.w,cpu.x));
-      // paddle collisions
-      if(ball.vy<0 && ball.y-ball.r<26 && ball.x>cpu.x && ball.x<cpu.x+cpu.w){
-        ball.vy=Math.abs(ball.vy);ball.vx+=((ball.x-(cpu.x+cpu.w/2))/cpu.w)*4;ball.vy*=1.04;
+      if(ball.x<CL+ball.r||ball.x>CR-ball.r)ball.vx*=-1;
+      ball.x=Math.max(CL+ball.r,Math.min(CR-ball.r,ball.x));
+      const cpuCenter=cpu.x,target=ball.y<(CT+CB)/2?ball.x:(CL+CR)/2;
+      cpu.x+=Math.max(-4.4,Math.min(4.4,target-cpuCenter))*0.92;
+      cpu.x=Math.max(CL+18,Math.min(CR-18,cpu.x));
+      if(ball.vy<0 && ball.y-ball.r<CT+22 && Math.abs(ball.x-cpu.x)<PW/2){
+        ball.vy=Math.abs(ball.vy);ball.vx+=((ball.x-cpu.x)/(PW/2))*3.4;ball.vy*=1.04;cpuSwing=1;playHit();
       }
-      if(ball.vy>0 && ball.y+ball.r>cv.height-26 && ball.x>you.x && ball.x<you.x+you.w){
-        ball.vy=-Math.abs(ball.vy);ball.vx+=((ball.x-(you.x+you.w/2))/you.w)*4;ball.vy*=1.04;
-        racketFlash();
+      if(ball.vy>0 && ball.y+ball.r>CB-22 && Math.abs(ball.x-you.x)<PW/2){
+        ball.vy=-Math.abs(ball.vy);ball.vx+=((ball.x-you.x)/(PW/2))*3.4;ball.vy*=1.04;youSwing=1;playHit();
       }
-      // cap speed
       ball.vy=Math.max(-9,Math.min(9,ball.vy));ball.vx=Math.max(-7,Math.min(7,ball.vx));
-      // scoring
-      if(ball.y<0){sYou++;updateScore();checkWin();if(!winner)resetBall(1);}
-      if(ball.y>cv.height){sCpu++;updateScore();checkWin();if(!winner)resetBall(-1);}
+      if(ball.y<CT-12){sYou++;updateScore();playCheer();checkWin();if(!winner)resetBall(1);}
+      if(ball.y>CB+12){sCpu++;updateScore();playCheer();checkWin();if(!winner)resetBall(-1);}
     }
-    // draw paddles
-    gx.fillStyle='#06120b';gx.fillRect(cpu.x,14,cpu.w,cpu.h);
-    gx.fillStyle='#caff2e';gx.fillRect(you.x,cv.height-26,you.w,you.h);
-    // ball
+    youSwing*=0.84;cpuSwing*=0.84;
+    // players
+    drawPlayer(cpu.x,CT+22,1,{shirt:'#0e6b3a',short:'#0a3f22',skin:'#c98d5a'},'MUZAMIL',cpuSwing);
+    drawPlayer(you.x,CB-22,-1,{shirt:'#d4f534',short:'#9fcf1f',skin:'#d9a06b'},'YOU',youSwing);
+    // ball + shadow
+    gx.fillStyle='rgba(0,0,0,.2)';gx.beginPath();gx.ellipse(ball.x,ball.y+6,ball.r,ball.r*0.4,0,0,7);gx.fill();
     gx.beginPath();gx.fillStyle='#d4f534';gx.arc(ball.x,ball.y,ball.r,0,7);gx.fill();
     gx.strokeStyle='#06120b';gx.lineWidth=1.4;gx.beginPath();gx.arc(ball.x,ball.y,ball.r,0.6,2.5);gx.stroke();
     gameRAF=requestAnimationFrame(drawLoop);
   }
-  let flashT=0;function racketFlash(){flashT=1;}
   function checkWin(){
     if(sYou>=7){winner='you';end('🏆 You beat Muzamil! GG.');}
     else if(sCpu>=7){winner='cpu';end('Muzamil takes the match — rematch?');}
   }
-  function end(msg){playing=false;document.getElementById('gameMsg').textContent=msg+' Click "Change court" to play again.';}
+  function end(msg){playing=false;document.getElementById('gameMsg').textContent=msg+' Tap "Change court" to play again.';}
 
   window.openGame=openGame;window.closeGame=closeGame;window.backToSetup=backToSetup;
   addEventListener('keydown',e=>{if(e.key==='Escape')closeGame();});
