@@ -105,11 +105,12 @@
   .big-ball .seam::before{content:"";position:absolute;top:-6%;left:18%;width:64%;height:112%;border:6px solid #fbffe9;border-radius:50%;transform:rotate(-18deg)}
   .big-ball .seam::after{content:"";position:absolute;top:-6%;right:18%;width:64%;height:112%;border:6px solid #fbffe9;border-radius:50%;transform:rotate(18deg)}
   @keyframes floaty{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-22px) rotate(4deg)}}
-  .rank-badge{position:absolute;z-index:3;background:rgba(10,20,16,.9);backdrop-filter:blur(8px);border:1px solid var(--card-bd);border-radius:14px;padding:12px 16px;box-shadow:0 14px 30px rgba(0,0,0,.4);animation:floaty 4s ease-in-out infinite}
+  .rank-badge{position:absolute;z-index:3;background:rgba(10,20,16,.9);backdrop-filter:blur(8px);border:2px solid var(--ball);border-radius:14px;padding:12px 16px;animation:floaty 4s ease-in-out infinite, badgeGlow 2.6s ease-in-out infinite}
+  @keyframes badgeGlow{0%,100%{box-shadow:0 12px 26px rgba(0,0,0,.4),0 0 6px rgba(212,245,52,.4),0 0 2px rgba(212,245,52,.3)}50%{box-shadow:0 12px 26px rgba(0,0,0,.4),0 0 26px rgba(212,245,52,.9),0 0 50px rgba(212,245,52,.45)}}
   .rank-badge .t{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
   .rank-badge .v{font-family:'Bebas Neue';font-size:1.5rem;color:var(--ball)}
   .rb1{top:-6%;left:-8%;animation-delay:.4s}
-  .rb2{bottom:4%;right:-10%;animation-delay:.9s}
+  .rb2{bottom:16%;right:-4%;animation-delay:.9s}
   .rb3{bottom:34%;left:-14%;animation-delay:1.4s}
 
   /* ---------- generic card grid ---------- */
@@ -227,6 +228,31 @@
   .modal-close{background:none;border:none;color:var(--text);font-size:1.6rem;cursor:pointer;line-height:1}
   .modal-box iframe{flex:1;border:none;background:#222}
 
+  /* play section */
+  .play-cta{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;background:linear-gradient(135deg,var(--court-dark),#06120b);border:1px solid var(--card-bd);border-radius:24px;padding:46px 24px}
+  .play-hint{color:var(--muted);font-size:.9rem}
+
+  /* game modal */
+  .game-box{background:#0c1712;border:1px solid var(--card-bd);border-radius:18px;width:min(720px,100%);max-height:92vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+  .game-body{padding:22px}
+  .g-label{font-size:.95rem;color:var(--ball);margin:6px 0 12px;font-weight:700}
+  #gameSetup .g-label:nth-of-type(2){margin-top:22px}
+  .opt-row{display:flex;flex-wrap:wrap;gap:10px}
+  .opt{background:var(--card);border:1.5px solid rgba(255,255,255,.12);color:var(--text);padding:11px 16px;border-radius:50px;font-weight:600;font-size:.9rem;cursor:pointer;transition:.2s}
+  .opt:hover{border-color:var(--ball)}
+  .opt.sel{background:var(--ball);color:#06120b;border-color:var(--ball)}
+  .score-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+  .score-bar #gameTitle{font-weight:700;color:var(--ball)}
+  .score-bar .scores{font-size:1.15rem}
+  .score-bar .scores b{color:var(--muted);font-size:.85rem;font-weight:600}
+  #gameCanvas{width:100%;height:auto;border-radius:12px;display:block;touch-action:none;cursor:none}
+  .game-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap}
+  .game-foot #gameMsg{color:var(--muted);font-size:.9rem}
+
+  /* racket swing on ball click */
+  .racket-pop{position:fixed;z-index:310;pointer-events:none;transform:translate(-50%,-50%);animation:racketSwing .45s ease-out forwards}
+  @keyframes racketSwing{0%{transform:translate(-50%,-50%) rotate(-60deg) scale(.6);opacity:0}30%{opacity:1}100%{transform:translate(-50%,-50%) rotate(35deg) scale(1.1);opacity:0}}
+
   /* floating bouncing ball easter egg */
   #bounceBall{position:fixed;width:34px;height:34px;border-radius:50%;z-index:120;cursor:pointer;display:none;
     background:radial-gradient(circle at 32% 28%,#eaff6b,var(--ball) 45%,#9fcf1f 100%);
@@ -271,6 +297,7 @@
       <a href="#tournaments">Tournaments</a>
       <a href="#skills">Skills</a>
       <a href="#contribute">Contribute</a>
+      <a href="#play">🎮 Play</a>
       <a class="nav-ic ig" href="https://www.instagram.com/muzammil_murtaza1?igsh=aHVod3NqczM0ZWNw" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16Zm0 1.62c-3.15 0-3.52.01-4.76.07-.9.04-1.39.19-1.72.32-.43.17-.74.37-1.06.69-.32.32-.52.63-.69 1.06-.13.33-.28.82-.32 1.72-.06 1.24-.07 1.61-.07 4.76s.01 3.52.07 4.76c.04.9.19 1.39.32 1.72.17.43.37.74.69 1.06.32.32.63.52 1.06.69.33.13.82.28 1.72.32 1.24.06 1.61.07 4.76.07s3.52-.01 4.76-.07c.9-.04 1.39-.19 1.72-.32.43-.17.74-.37 1.06-.69.32-.32.52-.63.69-1.06.13-.33.28-.82.32-1.72.06-1.24.07-1.61.07-4.76s-.01-3.52-.07-4.76c-.04-.9-.19-1.39-.32-1.72a2.85 2.85 0 0 0-.69-1.06 2.85 2.85 0 0 0-1.06-.69c-.33-.13-.82-.28-1.72-.32-1.24-.06-1.61-.07-4.76-.07Zm0 2.76a5.3 5.3 0 1 1 0 10.6 5.3 5.3 0 0 1 0-10.6Zm0 1.62a3.68 3.68 0 1 0 0 7.36 3.68 3.68 0 0 0 0-7.36Zm5.48-2.9a1.24 1.24 0 1 1 0 2.48 1.24 1.24 0 0 1 0-2.48Z"/></svg>
       </a>
@@ -322,9 +349,9 @@
     <div class="hero-visual">
       <div class="ball-stage">
         <div class="big-ball"><div class="seam"></div></div>
-        <div class="rank-badge rb1"><div class="t">Davis Cup</div><div class="v">Winner 🏆</div></div>
-        <div class="rank-badge rb2"><div class="t">Ranking</div><div class="v">Pakistan #1 🇵🇰</div></div>
-        <div class="rank-badge rb3"><div class="t">ATP Rank</div><div class="v">820</div></div>
+        <div class="rank-badge rb1"><div class="t">ATP Rank</div><div class="v">#820</div></div>
+        <div class="rank-badge rb2"><div class="t">Ranking</div><div class="v">PAKISTAN #1</div></div>
+        <div class="rank-badge rb3"><div class="t">Davis Cup</div><div class="v">Winner 🏆</div></div>
       </div>
     </div>
   </div>
@@ -509,6 +536,17 @@
   </div>
 </section>
 
+<!-- PLAY -->
+<section id="play">
+  <span class="eyebrow reveal">Game On</span>
+  <h2 class="section-title reveal">Play with Muzamil 🎾</h2>
+  <p class="section-sub reveal">Pick your surface and a Grand Slam, then rally against Muzamil. First to 7 points wins the match!</p>
+  <div class="play-cta reveal">
+    <button class="btn btn-primary" style="font-size:1.05rem;padding:16px 30px" onclick="openGame()">🎮 Play with Muzamil</button>
+    <span class="play-hint">Hard · Clay · Grass · move your racket with mouse or finger</span>
+  </div>
+</section>
+
 <!-- CV -->
 <section id="cv">
   <div class="cv-wrap reveal">
@@ -553,6 +591,48 @@
       </div>
     </div>
     <iframe id="cvFrame" title="CV" src="about:blank"></iframe>
+  </div>
+</div>
+
+<!-- GAME MODAL -->
+<div class="modal" id="gameModal">
+  <div class="game-box">
+    <div class="modal-head">
+      <h3>🎾 Play with Muzamil</h3>
+      <button class="modal-close" onclick="closeGame()" aria-label="Close">×</button>
+    </div>
+    <div class="game-body">
+      <!-- setup -->
+      <div id="gameSetup">
+        <h4 class="g-label">1 · Choose your court</h4>
+        <div class="opt-row" id="surfaceOpts">
+          <button type="button" class="opt" data-surface="hard">🔵 Hard Court</button>
+          <button type="button" class="opt" data-surface="clay">🟠 Clay Court</button>
+          <button type="button" class="opt" data-surface="grass">🟢 Wimbledon Grass</button>
+        </div>
+        <h4 class="g-label">2 · Choose tournament</h4>
+        <div class="opt-row" id="tourOpts">
+          <button type="button" class="opt" data-tour="Australian Open">🇦🇺 Australian Open</button>
+          <button type="button" class="opt" data-tour="French Open">🇫🇷 French Open</button>
+          <button type="button" class="opt" data-tour="Wimbledon">🇬🇧 Wimbledon</button>
+          <button type="button" class="opt" data-tour="US Open">🇺🇸 US Open</button>
+          <button type="button" class="opt" data-tour="Rome Masters">🇮🇹 Rome Masters</button>
+        </div>
+        <button class="btn btn-primary" id="startGame" style="margin-top:24px">Start Match 🎾</button>
+      </div>
+      <!-- play -->
+      <div id="gamePlay" style="display:none">
+        <div class="score-bar">
+          <span id="gameTitle">Match</span>
+          <span class="scores"><b>You</b> <span id="scoreYou">0</span> — <span id="scoreCpu">0</span> <b>Muzamil</b></span>
+        </div>
+        <canvas id="gameCanvas" width="640" height="430"></canvas>
+        <div class="game-foot">
+          <span id="gameMsg">Move your racket with the mouse / finger. First to 7 wins!</span>
+          <button class="btn btn-ghost" style="padding:8px 16px" onclick="backToSetup()">↺ Change court</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -636,11 +716,130 @@
     ballLabel.style.left=(bx+17)+'px';ballLabel.style.top=(by+40)+'px';
     if(running)raf=requestAnimationFrame(loop);
   }
-  bb.addEventListener('click',()=>{vx*=1.25;vy*=1.25;bb.animate([{transform:'scale(1.5)'},{transform:'scale(1)'}],{duration:200});});
+  // racket swing element
+  const RACKET_SVG='<svg width="58" height="58" viewBox="0 0 64 64" fill="none"><ellipse cx="26" cy="24" rx="17" ry="20" stroke="#caff2e" stroke-width="4" fill="rgba(202,255,46,.12)"/><g stroke="#caff2e" stroke-width="1.3" opacity=".8"><line x1="13" y1="18" x2="39" y2="18"/><line x1="12" y1="25" x2="40" y2="25"/><line x1="14" y1="32" x2="38" y2="32"/><line x1="20" y1="7" x2="20" y2="41"/><line x1="26" y1="5" x2="26" y2="43"/><line x1="32" y1="7" x2="32" y2="41"/></g><rect x="33" y="40" width="7" height="22" rx="3" transform="rotate(-38 36 51)" fill="#caff2e"/></svg>';
+  function racketHit(x,y){
+    const r=document.createElement('div');r.className='racket-pop';r.innerHTML=RACKET_SVG;
+    r.style.left=x+'px';r.style.top=y+'px';document.body.appendChild(r);
+    setTimeout(()=>r.remove(),460);
+  }
+  bb.addEventListener('click',e=>{
+    racketHit(e.clientX,e.clientY);          // swing a racket
+    vx=-vx*1.15;vy=-vy*1.15;                  // hit the ball back
+    const sp=Math.hypot(vx,vy),cap=11; if(sp>cap){vx*=cap/sp;vy*=cap/sp;}
+    bb.animate([{transform:'scale(1.6)'},{transform:'scale(1)'}],{duration:220});
+  });
   // launch the easter-egg ball after a short delay
   setTimeout(showBall,2600);
   // konami-ish: double click logo speeds it
   document.querySelector('.logo').addEventListener('dblclick',e=>{e.preventDefault();vx*=1.6;vy*=1.6;});
+
+  /* ===== Play with Muzamil — mini game ===== */
+  const gameModal=document.getElementById('gameModal');
+  const setupEl=document.getElementById('gameSetup'),playEl=document.getElementById('gamePlay');
+  let surface='hard',tournament='Australian Open',gameRAF=null,playing=false;
+  const SURF={
+    hard:{court:'#2f6fd0',line:'#eaf3ea',name:'Hard'},
+    clay:{court:'#b65327',line:'#ffe9d6',name:'Clay'},
+    grass:{court:'#2f7d3a',line:'#eaffea',name:'Grass'}
+  };
+  document.getElementById('surfaceOpts').addEventListener('click',e=>{
+    const b=e.target.closest('[data-surface]');if(!b)return;
+    surface=b.dataset.surface;
+    [...e.currentTarget.children].forEach(c=>c.classList.toggle('sel',c===b));
+  });
+  document.getElementById('tourOpts').addEventListener('click',e=>{
+    const b=e.target.closest('[data-tour]');if(!b)return;
+    tournament=b.dataset.tour;
+    [...e.currentTarget.children].forEach(c=>c.classList.toggle('sel',c===b));
+  });
+  // preselect defaults
+  document.querySelector('[data-surface="hard"]').classList.add('sel');
+  document.querySelector('[data-tour="Australian Open"]').classList.add('sel');
+
+  function openGame(){gameModal.classList.add('open');document.body.style.overflow='hidden';backToSetup();}
+  function closeGame(){gameModal.classList.remove('open');document.body.style.overflow='';stopGame();}
+  function backToSetup(){stopGame();playEl.style.display='none';setupEl.style.display='block';}
+  function stopGame(){playing=false;if(gameRAF)cancelAnimationFrame(gameRAF);gameRAF=null;}
+  gameModal.addEventListener('click',e=>{if(e.target===gameModal)closeGame();});
+  document.getElementById('startGame').addEventListener('click',startGame);
+
+  const cv=document.getElementById('gameCanvas'),gx=cv.getContext('2d');
+  let you,cpu,ball,sYou,sCpu,paddleW,winner;
+  function resetBall(dir){
+    ball={x:cv.width/2,y:cv.height/2,vx:(Math.random()*2-1)*3,vy:dir*4.2,r:8};
+  }
+  function startGame(){
+    setupEl.style.display='none';playEl.style.display='block';
+    document.getElementById('gameTitle').textContent=tournament+' · '+SURF[surface].name+' Court';
+    paddleW=90;
+    you={x:cv.width/2-paddleW/2,w:paddleW,h:12};
+    cpu={x:cv.width/2-paddleW/2,w:paddleW,h:12};
+    sYou=0;sCpu=0;winner=null;updateScore();
+    document.getElementById('gameMsg').textContent='Move your racket with the mouse / finger. First to 7 wins!';
+    resetBall(1);playing=true;if(gameRAF)cancelAnimationFrame(gameRAF);drawLoop();
+  }
+  function updateScore(){document.getElementById('scoreYou').textContent=sYou;document.getElementById('scoreCpu').textContent=sCpu;}
+  function movePaddle(clientX){
+    const rect=cv.getBoundingClientRect();
+    const scale=cv.width/rect.width;
+    let nx=(clientX-rect.left)*scale-you.w/2;
+    you.x=Math.max(0,Math.min(cv.width-you.w,nx));
+  }
+  cv.addEventListener('mousemove',e=>movePaddle(e.clientX));
+  cv.addEventListener('touchmove',e=>{e.preventDefault();movePaddle(e.touches[0].clientX);},{passive:false});
+
+  function drawLoop(){
+    const s=SURF[surface];
+    // court
+    gx.fillStyle=s.court;gx.fillRect(0,0,cv.width,cv.height);
+    gx.strokeStyle=s.line;gx.lineWidth=2;gx.globalAlpha=.7;
+    gx.strokeRect(14,14,cv.width-28,cv.height-28);
+    gx.beginPath();gx.setLineDash([8,8]);gx.moveTo(14,cv.height/2);gx.lineTo(cv.width-14,cv.height/2);gx.stroke();gx.setLineDash([]);
+    gx.globalAlpha=1;
+    // Muzamil label
+    gx.fillStyle='rgba(255,255,255,.85)';gx.font='bold 12px Outfit, sans-serif';
+    gx.fillText('🎾 MUZAMIL',16,30);
+
+    if(playing){
+      // ball move
+      ball.x+=ball.vx;ball.y+=ball.vy;
+      if(ball.x<ball.r||ball.x>cv.width-ball.r)ball.vx*=-1;
+      // cpu AI
+      const cpuCenter=cpu.x+cpu.w/2, target=ball.y<cv.height/2?ball.x:cv.width/2;
+      cpu.x+=Math.max(-4.6,Math.min(4.6,target-cpuCenter))*0.9;
+      cpu.x=Math.max(0,Math.min(cv.width-cpu.w,cpu.x));
+      // paddle collisions
+      if(ball.vy<0 && ball.y-ball.r<26 && ball.x>cpu.x && ball.x<cpu.x+cpu.w){
+        ball.vy=Math.abs(ball.vy);ball.vx+=((ball.x-(cpu.x+cpu.w/2))/cpu.w)*4;ball.vy*=1.04;
+      }
+      if(ball.vy>0 && ball.y+ball.r>cv.height-26 && ball.x>you.x && ball.x<you.x+you.w){
+        ball.vy=-Math.abs(ball.vy);ball.vx+=((ball.x-(you.x+you.w/2))/you.w)*4;ball.vy*=1.04;
+        racketFlash();
+      }
+      // cap speed
+      ball.vy=Math.max(-9,Math.min(9,ball.vy));ball.vx=Math.max(-7,Math.min(7,ball.vx));
+      // scoring
+      if(ball.y<0){sYou++;updateScore();checkWin();if(!winner)resetBall(1);}
+      if(ball.y>cv.height){sCpu++;updateScore();checkWin();if(!winner)resetBall(-1);}
+    }
+    // draw paddles
+    gx.fillStyle='#06120b';gx.fillRect(cpu.x,14,cpu.w,cpu.h);
+    gx.fillStyle='#caff2e';gx.fillRect(you.x,cv.height-26,you.w,you.h);
+    // ball
+    gx.beginPath();gx.fillStyle='#d4f534';gx.arc(ball.x,ball.y,ball.r,0,7);gx.fill();
+    gx.strokeStyle='#06120b';gx.lineWidth=1.4;gx.beginPath();gx.arc(ball.x,ball.y,ball.r,0.6,2.5);gx.stroke();
+    gameRAF=requestAnimationFrame(drawLoop);
+  }
+  let flashT=0;function racketFlash(){flashT=1;}
+  function checkWin(){
+    if(sYou>=7){winner='you';end('🏆 You beat Muzamil! GG.');}
+    else if(sCpu>=7){winner='cpu';end('Muzamil takes the match — rematch?');}
+  }
+  function end(msg){playing=false;document.getElementById('gameMsg').textContent=msg+' Click "Change court" to play again.';}
+
+  window.openGame=openGame;window.closeGame=closeGame;window.backToSetup=backToSetup;
+  addEventListener('keydown',e=>{if(e.key==='Escape')closeGame();});
 </script>
 </body>
 </html>
